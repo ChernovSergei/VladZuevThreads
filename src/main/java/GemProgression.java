@@ -8,30 +8,28 @@ public class GemProgression {
     private static final int SECOND_START = 501;
     private static final int SECOND_END = 1000;
     private static final String MESSAGE_TEMPLATE = "%s : %d\n";
-    private static final int WAITING = 1000;
 
     public static void main(String[] args) throws InterruptedException {
-        final TaskSummingNumbers firstTask = startSubTask(FIRST_START, FIRST_END);
-        final TaskSummingNumbers secondTask = startSubTask(SECOND_START, SECOND_END);
+        final TaskSummingNumbers firstTask = new TaskSummingNumbers(FIRST_START, FIRST_END);
+        final TaskSummingNumbers secondTask = new TaskSummingNumbers(SECOND_START, SECOND_END);
+        final Thread firstThread = new Thread(firstTask);
+        final Thread secondThread = new Thread(secondTask);
+        firstThread.start();
+        secondThread.start();
 
-        waitForThreads();
+        waitForThreads(firstThread, secondThread);
         final int resultNumber = firstTask.getResultNumber() + secondTask.getResultNumber();
         printThreadNameAndNumber(resultNumber);
     }
 
-    private static void waitForThreads() throws InterruptedException {
-        sleep(WAITING);
+    private static void waitForThreads(Thread... threads) throws InterruptedException {
+        for (final Thread thread : threads) {
+            thread.join();
+        }
     }
 
     private static void printThreadNameAndNumber(final int number) {
         System.out.printf(MESSAGE_TEMPLATE, Thread.currentThread().getName(), number);
-    }
-
-    private static TaskSummingNumbers startSubTask(final int fromNumber, final int toNumber) {
-        final TaskSummingNumbers subTask = new TaskSummingNumbers(fromNumber, toNumber);
-        final Thread thread = new Thread(subTask);
-        thread.start();
-        return subTask;
     }
 
     private static final class TaskSummingNumbers implements Runnable {
