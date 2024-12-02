@@ -19,7 +19,7 @@ public class GemProgression {
         printThreadNameAndNumber(resultNumber);
     }
 
-    private static void waitForThreads(final Thread... threads) throws InterruptedException {
+    private static void waitForThreads() throws InterruptedException {
         sleep(WAITING);
     }
 
