@@ -13,12 +13,9 @@ public class ThreadStop {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     doRequest();
-                    if (Thread.currentThread().isInterrupted()) {
-                        System.out.println(MSG_INTERRUPTED);
-                    }
                 }
             } catch (final InterruptedException e) {
-
+                System.out.println(MSG_INTERRUPTED);
             }
         });
         thread.start();
@@ -35,6 +32,7 @@ public class ThreadStop {
 
     private static void doRequest() throws InterruptedException{
         System.out.println(MSG_SENT);
+        TimeUnit.SECONDS.sleep(DURATION);
         System.out.println(MSG_RESPONSE);
     }
 
