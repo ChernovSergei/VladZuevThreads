@@ -4,6 +4,7 @@ public class ThreadDeamon {
     private static final String MSG_COMPLETED = "Main thread is completed";
     public static void main(String[] args) {
         final Thread thread = new Thread(new Task());
+        thread.setDaemon(true);
         thread.start();
         System.out.println(thread.isDaemon());
         System.out.println(MSG_COMPLETED);
