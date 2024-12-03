@@ -10,12 +10,14 @@ public class ThreadStop {
 
     public static void main(String[] args) throws InterruptedException {
         final Thread thread = new Thread(() ->  {
-            try {
-                while (!Thread.currentThread().isInterrupted()) {
+            while (true) {
+                try {
                     doRequest();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    System.out.println(Thread.currentThread().isInterrupted());
+                    System.out.println(MSG_INTERRUPTED);
                 }
-            } catch (final InterruptedException e) {
-                System.out.println(MSG_INTERRUPTED);
             }
         });
         thread.start();
