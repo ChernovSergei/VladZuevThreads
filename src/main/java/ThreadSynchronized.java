@@ -12,18 +12,28 @@ public class ThreadSynchronized {
     private final static Object LOCK_SECOND = new Object();
 
     public static void main(String[] args) throws InterruptedException {
+        final Counter firstCounter = new Counter();
+        final Counter secondCounter = new Counter();
 
-        final Thread firstThread = createIncrementCounterThread(INCREMENT_AMOUNT_FIRST,  i -> incrementFirstCounter());
-        final Thread secondThread = createIncrementCounterThread(INCREMENT_AMOUNT_FIRST,  i -> incrementFirstCounter());
-        final Thread thirdThread = createIncrementCounterThread(INCREMENT_AMOUNT_SECOND, i -> incrementSecondCounter());
-        final Thread fourthThread = createIncrementCounterThread(INCREMENT_AMOUNT_SECOND, i -> incrementSecondCounter());
+        final Thread firstThread = createIncrementCounterThread(INCREMENT_AMOUNT_FIRST,  i -> firstCounter.increment());
+        final Thread secondThread = createIncrementCounterThread(INCREMENT_AMOUNT_FIRST,  i -> firstCounter.increment());
+        final Thread thirdThread = createIncrementCounterThread(INCREMENT_AMOUNT_SECOND, i -> secondCounter.increment());
+        final Thread fourthThread = createIncrementCounterThread(INCREMENT_AMOUNT_SECOND, i -> secondCounter.increment());
 
         startThreads(firstThread, secondThread, thirdThread, fourthThread);
 
         joinThreads(firstThread, secondThread, thirdThread, fourthThread);
 
-        System.out.println(firstCounter);
-        System.out.println(secondCounter);
+        System.out.println(firstCounter.counter);
+        System.out.println(secondCounter.counter);
+    }
+
+    private static final class Counter {
+        private int counter;
+
+        public synchronized void increment() {
+            this.counter++;
+        }
     }
 
     private static Thread createIncrementCounterThread(final int increment, final IntConsumer incrementOperation) {
