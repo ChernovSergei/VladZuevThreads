@@ -42,11 +42,15 @@ public class ThreadSynchronized {
         });
     }
 
-    private static synchronized void incrementFirstCounter() {
-        firstCounter++;
+    private static void incrementFirstCounter() {
+        synchronized (ThreadSynchronized.class) {
+            firstCounter++;
+        }
     }
 
-    private static synchronized void incrementSecondCounter() {
-        secondCounter++;
+    private static void incrementSecondCounter() {
+        synchronized (ThreadSynchronized.class) {
+            secondCounter++;
+        }
     }
 }
