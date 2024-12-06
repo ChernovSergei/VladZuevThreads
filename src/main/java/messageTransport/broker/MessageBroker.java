@@ -19,6 +19,9 @@ public class MessageBroker {
     }
 
     public synchronized Message consume() {
+        while(this.messagesConsumed.isEmpty()) {
+
+        }
         return this.messagesConsumed.poll();
     }
 }

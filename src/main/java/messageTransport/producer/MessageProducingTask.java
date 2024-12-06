@@ -9,7 +9,7 @@ public class MessageProducingTask implements Runnable {
     private static final String MSG_PRODUCED = "Message '%s' is produced.\n";
     private final MessageBroker messageBroker;
     private final MessageFactory messageFactory;
-    private static final int SLEEP = 1;
+    private static final int SLEEP = 3;
 
     public MessageProducingTask(MessageBroker messageBroker) {
         this.messageBroker = messageBroker;
