@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 
@@ -9,14 +10,14 @@ public class ThreadSynchronized {
 
     public static void main(String[] args) throws InterruptedException {
 
-    final Thread firstThread = createIncrementCounterThread(INCREMENT_AMOUNT_FIRST,  i -> incrementFirstCounter());
-        final Thread secondThread = createIncrementCounterThread(INCREMENT_AMOUNT_SECOND, i -> incrementSecondCounter());
+        final Thread firstThread = createIncrementCounterThread(INCREMENT_AMOUNT_FIRST,  i -> incrementFirstCounter());
+        final Thread secondThread = createIncrementCounterThread(INCREMENT_AMOUNT_FIRST,  i -> incrementFirstCounter());
+        final Thread thirdThread = createIncrementCounterThread(INCREMENT_AMOUNT_SECOND, i -> incrementSecondCounter());
+        final Thread fourthThread = createIncrementCounterThread(INCREMENT_AMOUNT_SECOND, i -> incrementSecondCounter());
 
-        firstThread.start();
-        secondThread.start();
+        startThreads(firstThread, secondThread, thirdThread, fourthThread);
 
-        firstThread.join();
-        secondThread.join();
+        joinThreads(firstThread, secondThread, thirdThread, fourthThread);
 
         System.out.println(firstCounter);
         System.out.println(secondCounter);
@@ -26,11 +27,26 @@ public class ThreadSynchronized {
         return new Thread(() -> IntStream.range(0, increment).forEach(incrementOperation));
     }
 
-    private static void incrementFirstCounter() {
+    private static void startThreads(final Thread... threads) {
+        Arrays.stream(threads).forEach(Thread::start);
+    }
+
+    private static void joinThreads(final Thread... threads) {
+        Arrays.stream(threads).forEach(thread -> {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                System.out.println(e);
+                Thread.currentThread().interrupt();
+            }
+        });
+    }
+
+    private static synchronized void incrementFirstCounter() {
         firstCounter++;
     }
 
-    private static void incrementSecondCounter() {
+    private static synchronized void incrementSecondCounter() {
         secondCounter++;
     }
 }
