@@ -1,3 +1,4 @@
+import java.io.FileReader;
 import java.util.Arrays;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
@@ -7,6 +8,8 @@ public class ThreadSynchronized {
     private static int secondCounter = 0;
     private static final int INCREMENT_AMOUNT_FIRST = 500;
     private static final int INCREMENT_AMOUNT_SECOND = 600;
+    private final static Object LOCK_FIRST = new Object();
+    private final static Object LOCK_SECOND = new Object();
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -43,13 +46,13 @@ public class ThreadSynchronized {
     }
 
     private static void incrementFirstCounter() {
-        synchronized (ThreadSynchronized.class) {
+        synchronized (LOCK_FIRST) {
             firstCounter++;
         }
     }
 
     private static void incrementSecondCounter() {
-        synchronized (ThreadSynchronized.class) {
+        synchronized (LOCK_SECOND) {
             secondCounter++;
         }
     }
