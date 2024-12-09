@@ -15,16 +15,29 @@ public class MessageBroker {
     }
 
     public synchronized void produce(final Message message) {
-        while(this.messagesConsumed.size() >= this.maxMessages) {
+        try {
+            while (this.messagesConsumed.size() >= this.maxMessages) {
+                super.wait();
 
+            }
+            this.messagesConsumed.add(message);
+            super.notify();
+        } catch(final InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
-        this.messagesConsumed.add(message);
     }
 
     public synchronized Message consume() {
-        while(this.messagesConsumed.isEmpty()) {
-
+        try {
+            while (this.messagesConsumed.isEmpty()) {
+                super.wait();
+            }
+            final Message consumedMessage = this.messagesConsumed.poll();
+            super.notify();
+            return consumedMessage;
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
         }
-        return this.messagesConsumed.poll();
     }
 }
