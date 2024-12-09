@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MessageConsuming implements Runnable {
     private final MessageBroker messageBroker;
-    private static final int SLEEP = 1;
+    private static final int SLEEP = 3;
     private static final String MSG_TEMPLATE = "Message '%s' is consumed.\n";
 
     public MessageConsuming(MessageBroker messageBroker) {

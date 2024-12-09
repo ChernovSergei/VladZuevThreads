@@ -15,6 +15,9 @@ public class MessageBroker {
     }
 
     public synchronized void produce(final Message message) {
+        while(this.messagesConsumed.size() >= this.maxMessages) {
+
+        }
         this.messagesConsumed.add(message);
     }
 
