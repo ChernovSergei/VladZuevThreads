@@ -3,12 +3,12 @@ package messageTransport.consumer;
 import messageTransport.broker.MessageBroker;
 import messageTransport.model.Message;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class MessageConsuming implements Runnable {
     private final MessageBroker messageBroker;
     private static final int SLEEP = 1;
-    private static final String MSG_TEMPLATE = "Message '%s' is consumed.\n";
 
     public MessageConsuming(MessageBroker messageBroker) {
         this.messageBroker = messageBroker;
@@ -19,8 +19,8 @@ public class MessageConsuming implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 TimeUnit.SECONDS.sleep(SLEEP);
-                final Message consumedMessage = this.messageBroker.consume();
-                System.out.printf(MSG_TEMPLATE, consumedMessage);
+                final Optional<Message> consumedMessage = this.messageBroker.consume();
+                consumedMessage.orElseThrow(MessageConsumingException::new);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
