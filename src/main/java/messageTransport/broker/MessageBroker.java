@@ -30,7 +30,7 @@ public class MessageBroker {
             }
             this.messagesConsumed.add(message);
             System.out.printf(MSG_PRODUCED, message, producingTask.getName(), this.messagesConsumed.size() - 1);
-            super.notify();
+            super.notifyAll();
         } catch(final InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -43,7 +43,7 @@ public class MessageBroker {
             }
             final Message consumedMessage = this.messagesConsumed.poll();
             System.out.printf(MSG_TEMPLATE, consumedMessage, messageConsuming.getName(), this.messagesConsumed.size() + 1);
-            super.notify();
+            super.notifyAll();
             return ofNullable(consumedMessage);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
