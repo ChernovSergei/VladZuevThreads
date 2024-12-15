@@ -24,7 +24,7 @@ public class MessageBroker {
 
     public synchronized void produce(final Message message, final MessageProducingTask producingTask) {
         try {
-            while (!this.isShouldProduce(producingTask)) {
+            while (this.messagesConsumed.size() >= this.maxMessages) {
                 super.wait();
 
             }
@@ -38,7 +38,7 @@ public class MessageBroker {
 
     public synchronized Optional<Message> consume(final MessageConsuming messageConsuming) {
         try {
-            while (!this.isShouldConsume(messageConsuming)) {
+            while (this.messagesConsumed.isEmpty()) {
                 super.wait();
             }
             final Message consumedMessage = this.messagesConsumed.poll();

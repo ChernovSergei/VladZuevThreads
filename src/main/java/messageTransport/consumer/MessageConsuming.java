@@ -28,14 +28,9 @@ public class MessageConsuming implements Runnable {
 
     @Override
     public void run() {
-        try {
             while (!Thread.currentThread().isInterrupted()) {
-                TimeUnit.SECONDS.sleep(SLEEP);
                 final Optional<Message> consumedMessage = this.messageBroker.consume(this);
                 consumedMessage.orElseThrow(MessageConsumingException::new);
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }
