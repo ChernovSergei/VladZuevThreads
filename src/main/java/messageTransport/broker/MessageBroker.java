@@ -25,12 +25,12 @@ public class MessageBroker {
     public synchronized void produce(final Message message, final MessageProducingTask producingTask) {
         try {
             while (this.messagesConsumed.size() >= this.maxMessages) {
-                super.wait();
+                super.wait(100);
 
             }
             this.messagesConsumed.add(message);
             System.out.printf(MSG_PRODUCED, message, producingTask.getName(), this.messagesConsumed.size() - 1);
-            super.notifyAll();
+            super.notify();
         } catch(final InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -39,11 +39,11 @@ public class MessageBroker {
     public synchronized Optional<Message> consume(final MessageConsuming messageConsuming) {
         try {
             while (this.messagesConsumed.isEmpty()) {
-                super.wait();
+                super.wait(100);
             }
             final Message consumedMessage = this.messagesConsumed.poll();
             System.out.printf(MSG_TEMPLATE, consumedMessage, messageConsuming.getName(), this.messagesConsumed.size() + 1);
-            super.notifyAll();
+            super.notify();
             return ofNullable(consumedMessage);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
