@@ -12,12 +12,14 @@ public class ConditionBoundedBuffer<T> {
     private final T[] elements;
     private int size;
     private Lock lock;
-    private final Condition condition;
+    private final Condition notFull;
+    private final Condition notEmpty;
 
     public ConditionBoundedBuffer(final int capacity) {
         this.elements = (T[]) new Object[capacity];
         this.lock = new ReentrantLock();
-        this.condition = this.lock.newCondition();
+        this.notFull = this.lock.newCondition();
+        this.notEmpty = this.lock.newCondition();
     }
 
     public boolean isFull() {
@@ -42,12 +44,12 @@ public class ConditionBoundedBuffer<T> {
         this.lock.lock();
         try {
             while (this.isFull()) {
-                this.condition.await();
+                this.notFull.await();
             }
             this.elements[this.size] = element;
             this.size++;
             System.out.printf("%s was put in buffer. Buffer result %s%n", element, this);
-            this.condition.signalAll();
+            this.notEmpty.signal();
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -59,13 +61,13 @@ public class ConditionBoundedBuffer<T> {
         this.lock.lock();
         try {
             while (this.isEmpty()) {
-                this.condition.await();
+                this.notEmpty.await();
             }
             final T result = this.elements[this.size - 1];
             this.elements[this.size - 1] = null;
             this.size--;
             System.out.printf("%s was taken from buffer. Buffer result %s%n", result, this);
-            this.condition.signalAll();
+            this.notFull.signal();
             return result;
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
